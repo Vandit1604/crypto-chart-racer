@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Crypto Chart Racer — ride any token's chart</title>
+    <meta name="description" content="Ride a dirt bike across any crypto token's price chart. Pumps are ramps, dumps are cliffs." />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23faf6ec'/%3E%3Cpath d='M3 21 L11 15 L17 18 L23 9 L29 13' fill='none' stroke='%2314110c' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='12' cy='24' r='3.5' fill='none' stroke='%2314110c' stroke-width='1.8'/%3E%3Ccircle cx='22' cy='24' r='3.5' fill='none' stroke='%2314110c' stroke-width='1.8'/%3E%3C/svg%3E"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <canvas id="game"></canvas>
+
+    <!-- Top bar: token + search + ranges -->
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-name">Chart Racer</span>
+        <span class="brand-tag">MARKETS · DAILY</span>
+      </div>
+      <div class="search-wrap">
+        <input id="search-input" type="text" placeholder="Search any token…" autocomplete="off" />
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+      <div id="range-bar" class="range-bar"></div>
+    </header>
+
+    <!-- Ticker overlay -->
+    <div class="ticker">
+      <div id="token-name" class="token-name">—</div>
+      <div class="ticker-main">
+        <span id="ticker-price" class="ticker-price">—</span>
+        <span id="ticker-pct" class="ticker-pct">—</span>
+      </div>
+      <div id="ticker-date" class="ticker-date">—</div>
+    </div>
+
+    <!-- Score -->
+    <div class="scorebox">
+      <div id="score" class="score">0</div>
+      <div id="flips" class="flips">0 flips</div>
+      <div id="wheelie-chip" class="wheelie-chip">WHEELIE</div>
+    </div>
+
+    <!-- Controls cluster: pause -->
+    <div class="controls">
+      <button id="pause-btn" class="icon-btn" title="Pause (Esc)" aria-label="Pause">❙❙</button>
+    </div>
+
+    <!-- Progress along the chart -->
+    <div class="progress"><div id="progress-bar" class="progress-bar"></div></div>
+
+    <!-- Countdown -->
+    <div id="countdown" class="countdown"></div>
+
+    <div id="toast" class="toast"></div>
+    <div id="loader" class="loader">loading chart…</div>
+
+    <!-- Pause overlay -->
+    <div id="pause-overlay" class="overlay">
+      <div class="panel">
+        <p class="over-reason">Paused</p>
+        <h1>Intermission</h1>
+        <div class="btn-row">
+          <button id="resume-btn" class="btn primary">Resume ▸</button>
+        </div>
+        <p class="hint">Esc to resume</p>
+      </div>
+    </div>
+
+    <!-- Start overlay -->
+    <div id="start-overlay" class="overlay show">
+      <div class="panel">
+        <h1 id="start-title">Crypto Chart Racer</h1>
+        <p id="start-sub">Pick a token and ride its price history.</p>
+        <button id="start-btn" class="btn primary">Ride ▸</button>
+        <p class="hint">→ / D throttle &nbsp;·&nbsp; ← / A brake &nbsp;·&nbsp; lean in the air to flip</p>
+      </div>
+    </div>
+
+    <!-- Game over overlay -->
+    <div id="over-overlay" class="overlay">
+      <div class="panel">
+        <p id="over-reason" class="over-reason">Wiped out</p>
+        <div id="over-score" class="over-score">0</div>
+        <div id="over-best" class="over-best">Best: 0</div>
+        <div class="btn-row">
+          <button id="restart-btn" class="btn primary">Retry</button>
+          <button id="newtoken-btn" class="btn">New token</button>
+          <button id="share-btn" class="btn ghost">Share track</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
