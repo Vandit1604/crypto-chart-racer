@@ -81,15 +81,19 @@ export class Bike {
   apply(input: BikeInput, airborne: boolean): void {
     const t = input.throttle;
 
-    // Drive: ALL torque goes to the REAR wheel only — the front is never touched.
-    // Friction turns the rear spin into forward force, so the bike climbs hills
-    // and gains speed downhill. Torque only adds below MAX_OMEGA so it can't run
-    // away. Throttle drives forward, brake applies reverse torque (rear only).
-    const omega = this.wheelBack.angularVelocity;
-    if (t > 0) {
-      if (omega < BIKE.MAX_OMEGA) this.wheelBack.torque += t * BIKE.DRIVE_TORQUE;
-    } else if (t < 0) {
-      if (omega > -BIKE.MAX_OMEGA) this.wheelBack.torque += t * BIKE.BRAKE_TORQUE;
+    // Drive: a velocity MOTOR on the REAR wheel only (the Box2D wheel-joint
+    // model). Torque is proportional to how far the wheel is from its target
+    // spin, capped at MAX_MOTOR_TORQUE. Far below target (uphill / from a stop)
+    // it pulls at full torque; near target (cruise) it eases off so it neither
+    // wheelspins nor rears up. The front wheel is never touched.
+    if (t !== 0) {
+      const target = t > 0 ? BIKE.TARGET_OMEGA : BIKE.REVERSE_OMEGA;
+      const error = target - this.wheelBack.angularVelocity;
+      const torque = Math.max(
+        -BIKE.MAX_MOTOR_TORQUE,
+        Math.min(BIKE.MAX_MOTOR_TORQUE, error * BIKE.MOTOR_GAIN),
+      );
+      this.wheelBack.torque += torque;
     }
 
     // Pitch control ONLY in the air (Hill Climb Racing style): gas rotates the

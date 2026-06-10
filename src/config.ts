@@ -27,23 +27,25 @@ export const BIKE = {
   DENSITY: 0.0009,
   /** Rear-wheel grip — high traction so torque becomes forward force, not spin. */
   WHEEL_FRICTION: 1,
-  /** Extra wheelbase beyond the chassis half-width (px). A longer wheelbase
-   *  resists rearing, so the rear wheel can put down real power without
-   *  wheelie-ing the bike over. */
-  WHEELBASE_EXT: 10,
-  // Real engine: the rear wheel is driven by TORQUE, not a forced velocity.
-  // Friction turns that into forward force, so the bike climbs real hills and
-  // GAINS speed downhill (a velocity-capped wheel would brake you on descents).
-  /** Wheel density — slightly over the chassis to nudge the centre of mass down
-   *  (resists rearing) without adding so much inertia that it bogs down. */
+  /** Extra wheelbase beyond the chassis half-width (px). Small = a normal,
+   *  compact bike; the velocity-motor (below) self-limits force so it doesn't
+   *  need a long wheelbase to avoid wheelie-ing. */
+  WHEELBASE_EXT: 3,
+  /** Wheel density — slightly over the chassis to keep the centre of mass low. */
   WHEEL_DENSITY: 0.0011,
-  /** Rear-wheel drive torque per step. The wide wheelbase lets this be strong
-   *  without rearing into a wheelie on flat ground. */
-  DRIVE_TORQUE: 0.13,
-  /** Brake/reverse torque per step (rear only). */
-  BRAKE_TORQUE: 0.1,
-  /** Top wheel spin (rad/step); torque stops adding past this so it can't run away. */
-  MAX_OMEGA: 1.7,
+  // Drive uses the Box2D motorized-wheel-joint model: the rear wheel is driven
+  // toward a TARGET spin by torque proportional to the speed error, capped at a
+  // max torque. Below target (climbing / from a stop) it applies full torque so
+  // it pulls hard up hills; near target (cruising) the torque tapers to nothing
+  // so it doesn't wheelspin or rear up. The cap controls peak force = wheelie.
+  /** Target rear-wheel spin under throttle (rad/step) — sets top speed. */
+  TARGET_OMEGA: 1.9,
+  /** Target rear-wheel spin under brake/reverse (rad/step). */
+  REVERSE_OMEGA: -1.1,
+  /** Motor stiffness: torque per (rad/step) of speed error. */
+  MOTOR_GAIN: 0.7,
+  /** Max motor torque per step — caps force, so caps the acceleration wheelie. */
+  MAX_MOTOR_TORQUE: 0.11,
   // Pitch control is AIR-ONLY (Hill Climb Racing style). On the ground the bike
   // just drives — no chassis pitch, so holding gas never stalls or wheelies on
   // its own. In the air, gas/brake rotate the bike so you can spin and land flips.

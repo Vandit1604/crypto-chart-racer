@@ -93,16 +93,31 @@ for modest traffic) but heavy testing will hit `429`s.
 
 ## Deploy
 
-Drop on **Vercel** as-is: `api/*.ts` become serverless functions, the Vite app
-is the static frontend. Set `COINGECKO_API_KEY` in project env vars.
-For your own VPS, run `npm run build` and serve `dist/` behind any static host,
-with the two `/api/*` handlers wired into your Node server (they're framework-free
-`(req, res)` handlers).
+### Single server (Coolify / Docker / any VPS) — recommended
+
+One Node process serves the built frontend **and** the `/api/*` routes — no
+serverless, no separate API host:
+
+```bash
+npm run build      # builds dist/ AND bundles server.mjs
+npm start          # node server.mjs  (PORT env, default 3000)
+```
+
+The included **`Dockerfile`** does exactly this (multi-stage: build → tiny
+runtime that runs `server.mjs`, no node_modules in the final image). On
+**Coolify**: point it at this repo, it auto-detects the Dockerfile, set the
+optional `COINGECKO_API_KEY` env var, and expose port `3000`. Done.
+
+### Vercel
+
+Also works as-is: `api/*.ts` become serverless functions and the Vite app is the
+static frontend. Set `COINGECKO_API_KEY` in project env vars.
 
 ## Tuning the feel
 
 Everything lives in `src/config.ts` — terrain smoothness (`SUBDIV`, `AMPLITUDE`),
-bike drive/pitch, crash tolerance (`CRASH_TILT`), camera, and scoring weights.
+the rear-wheel motor (`TARGET_OMEGA`, `MAX_MOTOR_TORQUE`, `MOTOR_GAIN`), wheelbase,
+air pitch, wipeout tolerance, camera, and scoring weights.
 
 The control feel was dialed in empirically against the live game in headless
 Chrome:

@@ -1,8 +1,8 @@
 node_modules
 dist
 server.mjs
+.git
 .env
 .env.local
-.vercel
 scripts/shot-*.png
-node_modules/.cache
+*.log
