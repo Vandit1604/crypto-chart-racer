@@ -37,19 +37,21 @@ export class Bike {
       label: 'chassis',
     });
 
-    const wheelBase_ = { collisionFilter: filter, density: BIKE.WHEEL_DENSITY, restitution: 0.05, label: 'wheel' };
-    // Rear is the DRIVEN wheel — high grip for traction.
+    // restitution 0 so neither wheel bounces/skips off the ground.
+    const wheelBase_ = { collisionFilter: filter, density: BIKE.WHEEL_DENSITY, restitution: 0, label: 'wheel' };
+    // Rear is the DRIVEN wheel — grippy, but frictionStatic kept near friction so
+    // it doesn't stick-then-slip (that grab is what made it power-hop on accel).
     this.wheelBack = Bodies.circle(x - wheelBase, wheelY, WHEEL_R, {
       ...wheelBase_,
       friction: BIKE.WHEEL_FRICTION,
-      frictionStatic: 4,
+      frictionStatic: 1.1,
     });
-    // Front is a passive caster — it only holds the nose up and rolls along. Low
-    // friction so it never grips or fights the rear (no torque ever touches it).
+    // Front is a frictionless caster — it ONLY holds the nose up. Near-zero
+    // friction so it provides no traction and never fights the rear wheel.
     this.wheelFront = Bodies.circle(x + wheelBase, wheelY, WHEEL_R, {
       ...wheelBase_,
-      friction: 0.2,
-      frictionStatic: 0.4,
+      friction: 0.005,
+      frictionStatic: 0,
     });
 
     const axle = (wheel: Body, dx: number, stiffness: number) =>
@@ -58,7 +60,7 @@ export class Bike {
         pointA: { x: dx, y: CHASSIS_H * 0.5 },
         bodyB: wheel,
         stiffness,
-        damping: 0.1,
+        damping: 0.25, // more damping absorbs the accel hop
         length: 0,
       });
 
