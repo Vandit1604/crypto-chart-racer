@@ -16,4 +16,10 @@ ENV PORT=3000
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/server.mjs ./server.mjs
 EXPOSE 3000
+
+# Container-level health probe hitting the server's /healthz route (uses Node's
+# built-in fetch, so no extra tools needed). Docker/Coolify read this status.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
+  CMD node -e "fetch('http://127.0.0.1:'+(process.env.PORT||3000)+'/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+
 CMD ["node", "server.mjs"]
