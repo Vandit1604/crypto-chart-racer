@@ -4,10 +4,12 @@
 export const TERRAIN = {
   /** Evenly-resampled control points taken from the raw price series. */
   CONTROL_POINTS: 140,
-  /** Catmull-Rom subdivisions between control points (smoothness). */
-  SUBDIV: 6,
-  /** Horizontal world distance between two adjacent spline points (px). */
-  SEGMENT_W: 16,
+  /** Catmull-Rom subdivisions between control points (more = smoother curve and
+   *  rounder dips that the wheels roll through instead of wedging in). */
+  SUBDIV: 9,
+  /** Horizontal world distance between two adjacent spline points (px). Scaled
+   *  down with SUBDIV so the overall track length stays the same. */
+  SEGMENT_W: 11,
   /** Vertical world height the full price range maps onto (px). */
   AMPLITUDE: 520,
   /** How far below the lowest point the solid ground extends (px). */
@@ -52,9 +54,15 @@ export const BIKE = {
   /** Per-step air pitch (uncapped): gas rotates forward, brake rotates back.
    *  Higher = snappier flips off jumps. */
   AIR_PITCH: 0.032,
-  /** Both axles equally planted so the bike rests level (no front-heavy lean). */
-  AXLE_REAR_STIFF: 0.75,
-  AXLE_FRONT_STIFF: 0.75,
+  /** Suspension: both axles equal so the bike rests level. Softened from 0.75 so
+   *  the springs absorb bumps (smoother ride) and rebound out of dips. */
+  AXLE_REAR_STIFF: 0.55,
+  AXLE_FRONT_STIFF: 0.55,
+  /** Spring damping — lower lets the suspension breathe/rebound (a bit jumpy). */
+  AXLE_DAMPING: 0.18,
+  /** Wheel bounce — a little, so it hops over sharp features and pops out of deep
+   *  dips instead of dead-sticking at the bottom. */
+  WHEEL_RESTITUTION: 0.2,
   START_HEIGHT: 130,
 } as const;
 

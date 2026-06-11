@@ -37,8 +37,9 @@ export class Bike {
       label: 'chassis',
     });
 
-    // restitution 0 so neither wheel bounces/skips off the ground.
-    const wheelBase_ = { collisionFilter: filter, density: BIKE.WHEEL_DENSITY, restitution: 0, label: 'wheel' };
+    // A little restitution so the wheels hop over sharp features and don't dead-
+    // stick in deep dips.
+    const wheelBase_ = { collisionFilter: filter, density: BIKE.WHEEL_DENSITY, restitution: BIKE.WHEEL_RESTITUTION, label: 'wheel' };
     // Rear is the DRIVEN wheel — grippy, but frictionStatic kept near friction so
     // it doesn't stick-then-slip (that grab is what made it power-hop on accel).
     this.wheelBack = Bodies.circle(x - wheelBase, wheelY, WHEEL_R, {
@@ -60,7 +61,7 @@ export class Bike {
         pointA: { x: dx, y: CHASSIS_H * 0.5 },
         bodyB: wheel,
         stiffness,
-        damping: 0.25, // more damping absorbs the accel hop
+        damping: BIKE.AXLE_DAMPING,
         length: 0,
       });
 
