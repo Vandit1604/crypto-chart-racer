@@ -30,6 +30,13 @@ function sendJson(res: ServerResponse, body: unknown, status = 200): void {
 
 const server = createServer(async (req, res) => {
   const url = new URL(req.url ?? '/', 'http://localhost');
+
+  // Health probe for Coolify / load balancers — cheap, no upstream calls.
+  if (url.pathname === '/healthz') {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    return res.end('ok');
+  }
+
   try {
     if (url.pathname === '/api/chart') {
       const data = await getChart(
